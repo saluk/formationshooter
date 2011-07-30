@@ -80,5 +80,5 @@ class Engine:
             dest.blit(surf,rp)
         draw_segment(self.window,self.surface,[0,0],[1,1])
         if showfps:
-            self.window.blit(self.font.render(str(self.clock.get_fps()),1,[100,180,200]),[0,self.window.get_height()-12])
+            self.window.blit(self.font.render(str(self.clock.get_fps()),1,[0,0,0]),[0,self.window.get_height()-12])
         pygame.display.flip()
