@@ -27,6 +27,8 @@ class Controller:
                 engine.make_screen()
             if e.type == pygame.KEYDOWN and e.key == pygame.K_q:
                 engine.world.select_formation("circle")
+            if e.type == pygame.KEYDOWN and e.key == pygame.K_e:
+                engine.world.select_formation("corridor")
             if e.type == pygame.KEYDOWN and e.key == pygame.K_w:
                 engine.world.select_formation("upline")
             if e.type == pygame.KEYDOWN and e.key == pygame.K_d:
