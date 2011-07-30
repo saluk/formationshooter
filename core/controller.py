@@ -4,6 +4,7 @@ class Controller:
     def __init__(self,engine):
         self.engine = engine
     def input(self):
+        engine = self.engine
         pygame.event.pump()
         for e in pygame.event.get():
             if e.type==pygame.ACTIVEEVENT:
@@ -24,3 +25,13 @@ class Controller:
             e.key==pygame.K_RETURN and pygame.key.get_mods() & pygame.KMOD_ALT:
                 engine.fullscreen = 1-engine.fullscreen
                 engine.make_screen()
+            if e.type == pygame.KEYDOWN and e.key == pygame.K_w:
+                engine.world.select_formation("up")
+            if e.type == pygame.KEYDOWN and e.key == pygame.K_d:
+                engine.world.select_formation("right")
+            if e.type == pygame.KEYDOWN and e.key == pygame.K_a:
+                engine.world.select_formation("left")
+            if e.type == pygame.KEYDOWN and e.key == pygame.K_s:
+                engine.world.select_formation("down")
+            if e.type == pygame.KEYDOWN and e.key == pygame.K_SPACE:
+                engine.world.change_spread()
