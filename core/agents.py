@@ -131,8 +131,8 @@ class Unit(Agent):
                     dx = math.cos(ang)*self.max_speed
                     dy = math.sin(ang)*self.max_speed
                     change = [dx,dy]
-            #~ if change[0] or change[1]:
-                #~ self.next_bullet += 2
+            if change[0] or change[1]:
+                self.next_bullet += 2
             self.rot = self.formation_pos.rot
         #fire
         self.next_bullet-=1
