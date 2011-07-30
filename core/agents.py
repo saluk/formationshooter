@@ -88,6 +88,9 @@ class Unit(Agent):
         self.health = 2
         
         self.set_fire_rate(30)
+        self.shoot_stream = False
+        self.stream_length = 20
+        self.stream_time = 0
     def hit(self,bullet):
         self.health -= 1
     def set_fire_rate(self,spd):
@@ -136,6 +139,12 @@ class Unit(Agent):
         if self.next_bullet<=0:
             self.shoot(world)
             self.next_bullet = self.fire_rate
+            if self.shoot_stream:
+                self.stream_time += 1
+                if self.stream_time>=self.stream_length:
+                    self.stream_time = 0
+                else:
+                    self.next_bullet = 0
         super(Unit,self).update(world)
         self.pos[0]+=change[0]
         self.pos[1]+=change[1]

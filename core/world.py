@@ -154,7 +154,9 @@ class World:
         enemy.pos[1]=random.randint(32,240-32)
         enemy.walk_angle = 180
         enemy.rot = [-1,0]
-        enemy.set_fire_rate(1)
+        enemy.set_fire_rate(120)
+        enemy.shoot_stream = True
+        enemy.stream_length = 40
         self.enemies.append(enemy)
     def update(self):
         self.sprites = []
