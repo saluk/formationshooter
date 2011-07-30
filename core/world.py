@@ -14,14 +14,37 @@ class Formation:
     def __init__(self):
         self.positions = []
         self.icon = None
+    def order_positions(self):
+        """Sorts positions starting with the center"""
+        self.positions.sort(key=lambda p:(p.pos[0])**2+(p.pos[1])**2)
     def assign_units(self,units):
-        open = self.positions[:]
-        for u in units:
-            pos = self.find_pos(u,open)
-            if not pos:
+        self.order_positions()
+        open = units[:]
+        for p in self.positions:
+            u = self.find_unit(p,open)
+            if not u:
                 continue
-            open.remove(pos)
-            u.set_formation_position(pos)
+            open.remove(u)
+            u.set_formation_position(p)
+        #~ for u in units:
+            #~ pos = self.find_pos(u,open)
+            #~ if not pos:
+                #~ continue
+            #~ open.remove(pos)
+            #~ u.set_formation_position(pos)
+    def find_unit(self,p,units):
+        best = None
+        d = 1000
+        rp = p.realpos()
+        for u in units:
+            if not best:
+                best = u
+                continue
+            cd = (rp[0]-u.pos[0])**2+(rp[1]-u.pos[1])**2
+            if cd<d:
+                best = u
+                d = cd
+        return best
     def find_pos(self,u,positions):
         best = None
         d = 1000
