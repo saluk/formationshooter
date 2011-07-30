@@ -68,7 +68,6 @@ class Bullet(Agent):
         self.pos[1]+=self.rot[1]*4
         for col in world.collide(self,"bullet"):
             col.hit(self)
-            print "hit something"
             die = 1
         if self.pos[0]<0 or self.pos[0]>320 or self.pos[1]<0 or self.pos[1]>240:
             die = 1
