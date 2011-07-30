@@ -71,13 +71,14 @@ class ScrollingBackground(Agent):
         self.speed = [-0.5,0]
         self.scroll = [0,0]
     def update(self,world):
+        if not world.movement[0]:
+            return
         self.scroll[0]+=self.speed[0]
         self.scroll[1]+=self.speed[1]
         if self.scroll[0]>320:
             self.scroll[0]-=320
         if self.scroll[0]<-320:
             self.scroll[0]+=320
-        print self.scroll
         if self.graphics:
             self.surface = self.graphics.convert()
             self.surface.blit(self.graphics,[int(self.scroll[0]),self.scroll[1]])
@@ -90,10 +91,12 @@ class Unit(Agent):
         self.max_speed = 3
     def set_formation_position(self,p):
         self.formation_pos = p
-    def update(self,world,spread):
+    def update(self,world,spread,center):
         #head towards formation spot
         if self.formation_pos:
             rp = self.formation_pos.realpos(spread)
+            rp[0]+=center[0]*64
+            rp[1]+=center[1]*64
             change = [0,0]
             dx = rp[0]-self.pos[0]
             dy = rp[1]-self.pos[1]
@@ -119,13 +122,14 @@ class Squad:
         self.formation = None
         self.units = []
         self.spread = 1
+        self.center = [0,0]
     def set_formation(self,formation):
         self.formation = formation
         self.formation.assign_units(self.units)
     def update(self,world):
         spread = 16*self.spread
         for u in self.units:
-            u.update(world,spread)
+            u.update(world,spread,self.center)
 
 class World:
     def __init__(self,engine):
@@ -136,8 +140,15 @@ class World:
         self.enemies = []
         self.engine = engine
         self.formations = {}
+        self.movement = [1,0]
     def update(self):
         self.sprites = []
+        
+        self.movement = [0,0]
+        if self.formations:
+            if self.squads[0].formation == self.formations["right"]:
+                self.movement = [1,0]
+
         self.background.update(self)
         [b.update(self) for b in self.bullets]
         [s.update(self) for s in self.squads]
@@ -155,6 +166,16 @@ class World:
             s.spread = 3
         else:
             s.spread = 1
+    def center(self,dir):
+        dx,dy = dir
+        s = self.squads[0]
+        s.center[0]+=dx
+        s.center[1]+=dy
+        if s.center[1]<-1:
+            s.center[1]=-1
+        if s.center[1]>1:
+            s.center[1]=1
+        print s.center
     def level1(self):
         self.background = ScrollingBackground("art/bg/grassbleh.png")
         formation = Formation()
