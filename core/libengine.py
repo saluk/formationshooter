@@ -2,6 +2,7 @@ import sys,os
 import time
 import engine
 import controller
+import world
 import pickle
 if sys.platform=="win32":
     os.environ['SDL_VIDEODRIVER']='windib'
@@ -18,7 +19,9 @@ controller = controller.Controller(engine)
 
 def run():
     engine.running = True
+    engine.world = world.World(engine)
     engine.start()
+    engine.world.level1()
     
     
     lt = time.time()
@@ -34,6 +37,7 @@ def run():
         engine.next_screen -= engine.dt
         if engine.next_screen < 0:
             engine.clear_screen()
+            engine.world.draw()
             engine.draw_screen()
             engine.next_screen = engine.screen_refresh
         controller.input()

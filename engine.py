@@ -11,14 +11,17 @@ class Engine:
         self.sheight = 480
         self.iwidth = 320
         self.iheight = 240
+        self.window = None
         self.surface = None
         self.blank = None
         self.running = False
         self.paused = False
-        self.framerate = 30
+        self.framerate = 60
         self.dt = 0
         self.show_fps = True
         self.clock = None
+        self.world = None
+        self.next_tick = 0.0
     def start(self):
         """Separate from __init__ in case we want to make the object before making the screen"""
         pygame.init()
@@ -34,6 +37,11 @@ class Engine:
         self.paused = False
     def update(self):
         """One tick, according to dt"""
+        self.next_tick += self.dt
+        if self.world:
+            while self.next_tick>0:
+                self.next_tick -= 1
+                self.world.update()
     def make_screen(self):
         flags = pygame.RESIZABLE|pygame.FULLSCREEN*self.fullscreen
         self.window = pygame.display.set_mode([self.swidth,self.sheight],flags)
