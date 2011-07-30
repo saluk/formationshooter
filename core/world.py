@@ -13,6 +13,7 @@ class Position:
 class Formation:
     def __init__(self):
         self.positions = []
+        self.icon = None
     def assign_units(self,units):
         open = self.positions[:]
         for u in units:
@@ -35,6 +36,9 @@ class Formation:
                 d = cd
         return best
     def load(self,image):
+        self.icon = Agent(image)
+        self.icon.hotspot = [0,0]
+        self.icon.load()
         image = pygame.image.load(image)
         si = image.get_size()
         c = [si[0]//2,si[1]//2]
@@ -86,7 +90,7 @@ class World:
         
         self.movement = [0,0]
         if self.formations:
-            if self.squads[0].formation == self.formations["right"]:
+            if self.squads[0].formation == self.formations["rightline"]:
                 self.movement = [1,0]
 
         self.background.update(self)
@@ -97,6 +101,8 @@ class World:
         if self.background:
             self.background.draw(self.engine)
         [s.draw(self.engine) for s in self.sprites]
+        if self.squads[0].formation.icon:
+            self.squads[0].formation.icon.draw(self.engine)
     def select_formation(self,i):
         formation = self.formations[i]
         self.squads[0].set_formation(formation)
@@ -118,25 +124,12 @@ class World:
         print s.center
     def level1(self):
         self.background = ScrollingBackground("art/bg/grassbleh.png")
-        formation = Formation()
-        formation.positions = [Position([0,0],[1,0]),Position([0,1],[1,0]),Position([0,-1],[1,0])]
-        self.formations["right"] = formation
-        formation = Formation()
-        formation.positions = [Position([0,0],[0,-1]),Position([-1,0],[0,-1]),Position([1,0],[0,-1])]
-        self.formations["up"] = formation
-        formation = Formation()
-        formation.positions = [Position([0,0],[0,1]),Position([-1,0],[0,1]),Position([1,0],[0,1])]
-        self.formations["down"] = formation
-        formation = Formation()
-        formation.positions = [Position([0,0],[-1,0]),Position([0,1],[-1,0]),Position([0,-1],[-1,0])]
-        self.formations["left"] = formation
-        formation = Formation()
-        formation.load("art/formations/3prong.png")
-        self.formations["3prong"] = formation
+        for formimg in os.listdir("art/formations"):
+            formation = Formation()
+            formation.load("art/formations/"+formimg)
+            self.formations[formimg.replace(".png","")] = formation
         squad = Squad()
         for i in range(8):
-            squad.units.append(Unit("art/fg/unit.png"))
-            squad.units.append(Unit("art/fg/unit.png"))
             squad.units.append(Unit("art/fg/unit.png"))
         squad.set_formation(formation)
         self.squads = [squad]
