@@ -1,4 +1,6 @@
+import pygame
 import random
+import os
 from agents import *
 
 class Position:
@@ -15,6 +17,8 @@ class Formation:
         open = self.positions[:]
         for u in units:
             pos = self.find_pos(u,open)
+            if not pos:
+                continue
             open.remove(pos)
             u.set_formation_position(pos)
     def find_pos(self,u,positions):
@@ -30,6 +34,28 @@ class Formation:
                 best = p
                 d = cd
         return best
+    def load(self,image):
+        image = pygame.image.load(image)
+        si = image.get_size()
+        c = [si[0]//2,si[1]//2]
+        y=0
+        while y<si[1]:
+            x = 0
+            while x<si[0]:
+                index = image.map_rgb(image.get_at((x,y)))
+                dir = None
+                if index==0:
+                    dir=[1,0]
+                elif index==1:
+                    dir=[0,-1]
+                elif index==2:
+                    dir=[0,1]
+                elif index==3:
+                    dir=[-1,0]
+                if dir:
+                    self.positions.append(Position([x-c[0],y-c[1]],dir))
+                x+=1
+            y+=1
         
 class Squad:
     def __init__(self):
@@ -104,9 +130,13 @@ class World:
         formation = Formation()
         formation.positions = [Position([0,0],[-1,0]),Position([0,1],[-1,0]),Position([0,-1],[-1,0])]
         self.formations["left"] = formation
+        formation = Formation()
+        formation.load("art/formations/3prong.png")
+        self.formations["3prong"] = formation
         squad = Squad()
-        squad.units.append(Unit("art/fg/unit.png"))
-        squad.units.append(Unit("art/fg/unit.png"))
-        squad.units.append(Unit("art/fg/unit.png"))
+        for i in range(8):
+            squad.units.append(Unit("art/fg/unit.png"))
+            squad.units.append(Unit("art/fg/unit.png"))
+            squad.units.append(Unit("art/fg/unit.png"))
         squad.set_formation(formation)
         self.squads = [squad]

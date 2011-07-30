@@ -33,6 +33,8 @@ class Controller:
                 engine.world.select_formation("left")
             if e.type == pygame.KEYDOWN and e.key == pygame.K_s:
                 engine.world.select_formation("down")
+            if e.type == pygame.KEYDOWN and e.key == pygame.K_z:
+                engine.world.select_formation("3prong")
             if e.type == pygame.KEYDOWN and e.key == pygame.K_SPACE:
                 engine.world.change_spread()
             if e.type == pygame.KEYDOWN and e.key == pygame.K_UP:
