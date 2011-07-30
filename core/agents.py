@@ -63,6 +63,10 @@ class Unit(Agent):
     def __init__(self,*args,**kwargs):
         super(Unit,self).__init__(*args,**kwargs)
         self.formation_pos = None
+        self.spread = 1
+        self.center = [0,0]
+        
+        self.walk_angle = None
         self.max_speed = 3
         
         self.fire_rate = 30
@@ -74,13 +78,18 @@ class Unit(Agent):
         sp = [self.pos[0]+16*self.rot[0],self.pos[1]+16*self.rot[1]]
         b = Bullet("art/fg/bullet.png",sp,self.rot)
         world.bullets.append(b)
-    def update(self,world,spread,center):
+    def update(self,world):
         #head towards formation spot
+        change = [0,0]
+        if self.walk_angle is not None:
+            ang = self.walk_angle*math.pi/180.0
+            dx = math.cos(ang)*self.max_speed
+            dy = math.sin(ang)*self.max_speed
+            change = [dx,dy]
         if self.formation_pos:
-            rp = self.formation_pos.realpos(spread)
-            rp[0]+=center[0]*64
-            rp[1]+=center[1]*64
-            change = [0,0]
+            rp = self.formation_pos.realpos(self.spread)
+            rp[0]+=self.center[0]*64
+            rp[1]+=self.center[1]*64
             dx = rp[0]-self.pos[0]
             dy = rp[1]-self.pos[1]
             if dx==0:
@@ -97,8 +106,6 @@ class Unit(Agent):
                     change = [dx,dy]
             #~ if change[0] or change[1]:
                 #~ self.next_bullet += 2
-            self.pos[0]+=change[0]
-            self.pos[1]+=change[1]
             self.rot = self.formation_pos.rot
         #fire
         self.next_bullet-=1
@@ -106,3 +113,5 @@ class Unit(Agent):
             self.shoot(world)
             self.next_bullet = self.fire_rate
         super(Unit,self).update(world)
+        self.pos[0]+=change[0]
+        self.pos[1]+=change[1]

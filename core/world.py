@@ -96,7 +96,9 @@ class Squad:
     def update(self,world):
         spread = 16*self.spread
         for u in self.units:
-            u.update(world,spread,self.center)
+            u.spread = spread
+            u.center = self.center
+            u.update(world)
 
 class World:
     def __init__(self,engine):
@@ -108,6 +110,7 @@ class World:
         self.engine = engine
         self.formations = {}
         self.movement = [1,0]
+        self.step = 0
     def update(self):
         self.sprites = []
         
@@ -115,6 +118,14 @@ class World:
         if self.formations:
             if self.squads[0].formation == self.formations["rightline"]:
                 self.movement = [1,0]
+        if self.movement[0]:
+            self.step += self.movement[0]
+            if self.step==2:
+                enemy = Unit("art/fg/grunt.png")
+                enemy.pos[0]=320+16
+                enemy.pos[1]=random.randint(16,240-16)
+                enemy.walk_angle = 180
+                self.enemies.append(enemy)
 
         self.background.update(self)
         [b.update(self) for b in self.bullets]
