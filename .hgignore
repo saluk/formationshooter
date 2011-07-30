@@ -1,0 +1,10 @@
+syntax: glob
+*.pyc
+lastlog.txt
+library.zip
+loghistory.txt
+notes.txt
+python26.dll
+PyWright.exe
+w9xpopen.exe
+main.exe
