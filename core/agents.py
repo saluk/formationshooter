@@ -37,6 +37,7 @@ class Agent(object):
             return pygame.Rect([[0,0],[0,0]])
         r = self.surface.get_rect()
         r = r.move(self.pos[0]-self.hotspot[0],self.pos[1]-self.hotspot[1])
+        r = r.inflate(-2,-2)
         return r
         
 
