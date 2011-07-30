@@ -124,8 +124,14 @@ class World:
         if self.background:
             self.background.draw(self.engine)
         [s.draw(self.engine) for s in self.sprites]
-        if self.squads[0].formation.icon:
-            self.squads[0].formation.icon.draw(self.engine)
+        x = 0
+        for form in self.formations.values():
+            if form == self.squads[0].formation:
+                pygame.draw.rect(self.engine.surface,[255,0,0],[[x,0],[17,17]])
+            if form.icon:
+                form.icon.pos = [x+1,1]
+                form.icon.draw(self.engine)
+            x+=16
     def select_formation(self,i):
         formation = self.formations[i]
         self.squads[0].set_formation(formation)
