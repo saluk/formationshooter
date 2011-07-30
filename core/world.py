@@ -99,6 +99,10 @@ class Squad:
             u.spread = spread
             u.center = self.center
             u.update(world)
+    def force(self):
+        """Force all units into their positions"""
+        for u in self.units:
+            u.pos = u.formation_pos.realpos(16*self.spread)
 
 class World:
     def __init__(self,engine):
@@ -111,6 +115,27 @@ class World:
         self.formations = {}
         self.movement = [1,0]
         self.step = 0
+    def collide(self,agent,type):
+        all = self.enemies[:]
+        for s in self.squads:
+            all.extend(s.units)
+        ret = []
+        p = agent.pos
+        for u in all:
+            r = u.rect()
+            if r.collidepoint(p):
+                ret.append(u)
+        return ret
+    def remove_unit(self,u):
+        """Hacky remove"""
+        if u in self.enemies:
+            return self.enemies.remove(u)
+        for s in self.squads:
+            if u in s.units:
+                s.units.remove(u)
+    def remove_bullet(self,b):
+        if b in self.bullets:
+            self.bullets.remove(b)
     def update(self):
         self.sprites = []
         
@@ -122,13 +147,17 @@ class World:
             self.step += self.movement[0]
             if self.step==2:
                 enemy = Unit("art/fg/grunt.png")
+                enemy.max_speed = 1
                 enemy.pos[0]=320+16
                 enemy.pos[1]=random.randint(16,240-16)
                 enemy.walk_angle = 180
+                enemy.rot = [-1,0]
+                enemy.set_fire_rate(100)
                 self.enemies.append(enemy)
 
         self.background.update(self)
-        [b.update(self) for b in self.bullets]
+        for b in self.bullets:
+            b.update(self)
         [s.update(self) for s in self.squads]
         [e.update(self) for e in self.enemies]
     def draw(self):
@@ -169,7 +198,8 @@ class World:
             formation.load("art/formations/"+formimg)
             self.formations[formimg.replace(".png","")] = formation
         squad = Squad()
-        for i in range(8):
+        for i in range(7):
             squad.units.append(Unit("art/fg/unit.png"))
         squad.set_formation(formation)
+        squad.force()
         self.squads = [squad]

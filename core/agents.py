@@ -32,6 +32,13 @@ class Agent(object):
         if not self.surface and self.art:
             self.load()
         engine.surface.blit(self.surface,[self.pos[0]-self.hotspot[0],self.pos[1]-self.hotspot[1]])
+    def rect(self):
+        if not self.surface:
+            return pygame.Rect([[0,0],[0,0]])
+        r = self.surface.get_rect()
+        r = r.move(self.pos[0]-self.hotspot[0],self.pos[1]-self.hotspot[1])
+        return r
+        
 
 class ScrollingBackground(Agent):
     def __init__(self,*args,**kwargs):
@@ -55,8 +62,17 @@ class ScrollingBackground(Agent):
             
 class Bullet(Agent):
     def update(self,world):
+        die = False
         self.pos[0]+=self.rot[0]*4
         self.pos[1]+=self.rot[1]*4
+        for col in world.collide(self,"bullet"):
+            col.hit(self)
+            print "hit something"
+            die = 1
+        if self.pos[0]<0 or self.pos[0]>320 or self.pos[1]<0 or self.pos[1]>240:
+            die = 1
+        if die:
+            world.remove_bullet(self)
         super(Bullet,self).update(world)
         
 class Unit(Agent):
@@ -69,7 +85,13 @@ class Unit(Agent):
         self.walk_angle = None
         self.max_speed = 3
         
-        self.fire_rate = 30
+        self.health = 2
+        
+        self.set_fire_rate(30)
+    def hit(self,bullet):
+        self.health -= 1
+    def set_fire_rate(self,spd):
+        self.fire_rate = spd
         self.next_bullet = self.fire_rate
     def set_formation_position(self,p):
         self.formation_pos = p
@@ -79,6 +101,8 @@ class Unit(Agent):
         b = Bullet("art/fg/bullet.png",sp,self.rot)
         world.bullets.append(b)
     def update(self,world):
+        if self.health<=0:
+            world.remove_unit(self)
         #head towards formation spot
         change = [0,0]
         if self.walk_angle is not None:
