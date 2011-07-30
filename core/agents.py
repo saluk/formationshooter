@@ -97,7 +97,7 @@ class Unit(Agent):
         self.formation_pos = p
         self.next_bullet = self.fire_rate
     def shoot(self,world):
-        sp = [self.pos[0]+16*self.rot[0],self.pos[1]+16*self.rot[1]]
+        sp = [self.pos[0]+self.hotspot[0]*self.rot[0],self.pos[1]+self.hotspot[1]*self.rot[1]]
         b = Bullet("art/fg/bullet.png",sp,self.rot)
         world.bullets.append(b)
     def update(self,world):

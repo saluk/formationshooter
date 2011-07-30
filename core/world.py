@@ -136,6 +136,26 @@ class World:
     def remove_bullet(self,b):
         if b in self.bullets:
             self.bullets.remove(b)
+    def make_grunt(self):
+        enemy = Unit("art/fg/grunt.png")
+        enemy.max_speed = 1
+        enemy.pos[0]=320+16
+        enemy.pos[1]=random.randint(16,240-16)
+        enemy.walk_angle = 180
+        enemy.rot = [-1,0]
+        enemy.set_fire_rate(100)
+        self.enemies.append(enemy)
+    def make_tank(self):
+        enemy = Unit("art/fg/tank.png")
+        enemy.max_speed = 0.2
+        enemy.hotspot = [32,32]
+        enemy.health = 20
+        enemy.pos[0]=320+32
+        enemy.pos[1]=random.randint(32,240-32)
+        enemy.walk_angle = 180
+        enemy.rot = [-1,0]
+        enemy.set_fire_rate(1)
+        self.enemies.append(enemy)
     def update(self):
         self.sprites = []
         
@@ -146,14 +166,9 @@ class World:
         if self.movement[0]:
             self.step += self.movement[0]
             if self.step==2:
-                enemy = Unit("art/fg/grunt.png")
-                enemy.max_speed = 1
-                enemy.pos[0]=320+16
-                enemy.pos[1]=random.randint(16,240-16)
-                enemy.walk_angle = 180
-                enemy.rot = [-1,0]
-                enemy.set_fire_rate(100)
-                self.enemies.append(enemy)
+                self.make_grunt()
+            if self.step==100:
+                self.make_tank()
 
         self.background.update(self)
         for b in self.bullets:
