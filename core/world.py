@@ -63,6 +63,25 @@ class Agent(object):
         if not self.surface and self.art:
             self.load()
         engine.surface.blit(self.surface,[self.pos[0]-self.hotspot[0],self.pos[1]-self.hotspot[1]])
+
+class ScrollingBackground(Agent):
+    def __init__(self,*args,**kwargs):
+        super(ScrollingBackground,self).__init__(*args,**kwargs)
+        self.hotspot = [0,0]
+        self.speed = [-0.5,0]
+        self.scroll = [0,0]
+    def update(self,world):
+        self.scroll[0]+=self.speed[0]
+        self.scroll[1]+=self.speed[1]
+        if self.scroll[0]>320:
+            self.scroll[0]-=320
+        if self.scroll[0]<-320:
+            self.scroll[0]+=320
+        print self.scroll
+        if self.graphics:
+            self.surface = self.graphics.convert()
+            self.surface.blit(self.graphics,[int(self.scroll[0]),self.scroll[1]])
+            self.surface.blit(self.graphics,[int(self.scroll[0])+320,self.scroll[1]])
         
 class Unit(Agent):
     def __init__(self,*args,**kwargs):
@@ -104,7 +123,7 @@ class Squad:
         self.formation = formation
         self.formation.assign_units(self.units)
     def update(self,world):
-        spread = 32*self.spread
+        spread = 16*self.spread
         for u in self.units:
             u.update(world,spread)
 
@@ -119,6 +138,7 @@ class World:
         self.formations = {}
     def update(self):
         self.sprites = []
+        self.background.update(self)
         [b.update(self) for b in self.bullets]
         [s.update(self) for s in self.squads]
         [e.update(self) for e in self.enemies]
@@ -136,6 +156,7 @@ class World:
         else:
             s.spread = 1
     def level1(self):
+        self.background = ScrollingBackground("art/bg/grassbleh.png")
         formation = Formation()
         formation.positions = [Position([0,0],[1,0]),Position([0,1],[1,0]),Position([0,-1],[1,0])]
         self.formations["right"] = formation
