@@ -11,7 +11,8 @@ class Position:
         return [320//2+self.pos[0]*spread,240//2+self.pos[1]*spread]
 
 class Formation:
-    def __init__(self):
+    def __init__(self,name):
+        self.name = name
         self.positions = []
         self.icon = None
     def order_positions(self):
@@ -165,7 +166,7 @@ class World:
         
         self.movement = [0,0]
         if self.formations:
-            if self.squads[0].formation == self.formations["rightline"]:
+            if "_right" in self.squads[0].formation.name:
                 self.movement = [1,0]
         if self.movement[0]:
             self.step += self.movement[0]
@@ -194,6 +195,10 @@ class World:
     def select_formation(self,i):
         formation = self.formations[i]
         self.squads[0].set_formation(formation)
+    def formation_dir(self,dir):
+        s = self.squads[0]
+        if s.formation:
+            self.select_formation(s.formation.name.split("_")[0]+"_"+dir)
     def change_spread(self):
         s = self.squads[0]
         if s.spread==1:
@@ -213,12 +218,12 @@ class World:
     def level1(self):
         self.background = ScrollingBackground("art/bg/grassbleh.png")
         for formimg in os.listdir("art/formations"):
-            formation = Formation()
+            formation = Formation(formimg.replace(".png",""))
             formation.load("art/formations/"+formimg)
-            self.formations[formimg.replace(".png","")] = formation
+            self.formations[formation.name] = formation
         squad = Squad()
         for i in range(7):
             squad.units.append(Unit("art/fg/unit.png"))
-        squad.set_formation(formation)
-        squad.force()
         self.squads = [squad]
+        self.select_formation("line_right")
+        squad.force()
