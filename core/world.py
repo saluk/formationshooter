@@ -138,6 +138,7 @@ class World:
             self.bullets.remove(b)
     def make_grunt(self):
         enemy = Unit("art/fg/grunt.png")
+        enemy.team = "enemy"
         enemy.max_speed = 1
         enemy.pos[0]=320+16
         enemy.pos[1]=random.randint(16,240-16)
@@ -147,6 +148,7 @@ class World:
         self.enemies.append(enemy)
     def make_tank(self):
         enemy = Unit("art/fg/tank.png")
+        enemy.team = "enemy"
         enemy.max_speed = 0.2
         enemy.hotspot = [32,32]
         enemy.health = 20
