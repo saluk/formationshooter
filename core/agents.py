@@ -67,8 +67,9 @@ class Bullet(Agent):
         self.pos[0]+=self.rot[0]*4
         self.pos[1]+=self.rot[1]*4
         for col in world.collide(self,"bullet"):
-            col.hit(self)
-            die = 1
+            if col.team!=self.team:
+                col.hit(self)
+                die = 1
         if self.pos[0]<0 or self.pos[0]>320 or self.pos[1]<0 or self.pos[1]>240:
             die = 1
         if die:
@@ -91,6 +92,8 @@ class Unit(Agent):
         self.shoot_stream = False
         self.stream_length = 20
         self.stream_time = 0
+        
+        self.team = "player"
     def hit(self,bullet):
         self.health -= 1
     def set_fire_rate(self,spd):
@@ -102,6 +105,7 @@ class Unit(Agent):
     def shoot(self,world):
         sp = [self.pos[0]+self.hotspot[0]*self.rot[0],self.pos[1]+self.hotspot[1]*self.rot[1]]
         b = Bullet("art/fg/bullet.png",sp,self.rot)
+        b.team = self.team
         world.bullets.append(b)
     def update(self,world):
         if self.health<=0:
