@@ -26,18 +26,10 @@ class Controller:
                 engine.fullscreen = 1-engine.fullscreen
                 engine.make_screen()
             if e.type == pygame.KEYDOWN and e.key == pygame.K_DOWN:
-                engine.world.select_formation("circle")
+                engine.world.formation_dir("down")
             if e.type == pygame.KEYDOWN and e.key == pygame.K_UP:
-                engine.world.select_formation("corridor")
+                engine.world.formation_dir("up")
             if e.type == pygame.KEYDOWN and e.key == pygame.K_RIGHT:
-                engine.world.select_formation("stagger")
+                engine.world.formation_dir("right")
             if e.type == pygame.KEYDOWN and e.key == pygame.K_LEFT:
-                engine.world.select_formation("staggerl")
-            if e.type == pygame.KEYDOWN and e.key == pygame.K_w:
-                engine.world.select_formation("upline")
-            if e.type == pygame.KEYDOWN and e.key == pygame.K_d:
-                engine.world.select_formation("rightline")
-            if e.type == pygame.KEYDOWN and e.key == pygame.K_a:
-                engine.world.select_formation("leftline")
-            if e.type == pygame.KEYDOWN and e.key == pygame.K_s:
-                engine.world.select_formation("downline")
+                engine.world.formation_dir("left")
