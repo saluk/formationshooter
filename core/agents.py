@@ -116,7 +116,8 @@ class Unit(Agent):
         if self.walk_angle is not None:
             ang = self.walk_angle*math.pi/180.0
             dx = math.cos(ang)*self.max_speed
-            dy = math.sin(ang)*self.max_speed
+            dy = -math.sin(ang)*self.max_speed
+            print dx,dy
             change = [dx,dy]
         if self.formation_pos:
             rp = self.formation_pos.realpos(self.spread)
