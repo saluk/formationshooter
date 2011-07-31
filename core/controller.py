@@ -25,10 +25,14 @@ class Controller:
             e.key==pygame.K_RETURN and pygame.key.get_mods() & pygame.KMOD_ALT:
                 engine.fullscreen = 1-engine.fullscreen
                 engine.make_screen()
-            if e.type == pygame.KEYDOWN and e.key == pygame.K_q:
+            if e.type == pygame.KEYDOWN and e.key == pygame.K_DOWN:
                 engine.world.select_formation("circle")
-            if e.type == pygame.KEYDOWN and e.key == pygame.K_e:
+            if e.type == pygame.KEYDOWN and e.key == pygame.K_UP:
                 engine.world.select_formation("corridor")
+            if e.type == pygame.KEYDOWN and e.key == pygame.K_RIGHT:
+                engine.world.select_formation("stagger")
+            if e.type == pygame.KEYDOWN and e.key == pygame.K_LEFT:
+                engine.world.select_formation("staggerl")
             if e.type == pygame.KEYDOWN and e.key == pygame.K_w:
                 engine.world.select_formation("upline")
             if e.type == pygame.KEYDOWN and e.key == pygame.K_d:
@@ -37,9 +41,3 @@ class Controller:
                 engine.world.select_formation("leftline")
             if e.type == pygame.KEYDOWN and e.key == pygame.K_s:
                 engine.world.select_formation("downline")
-            if e.type == pygame.KEYDOWN and e.key == pygame.K_SPACE:
-                engine.world.change_spread()
-            if e.type == pygame.KEYDOWN and e.key == pygame.K_UP:
-                engine.world.center([0,-1])
-            if e.type == pygame.KEYDOWN and e.key == pygame.K_DOWN:
-                engine.world.center([0,1])
