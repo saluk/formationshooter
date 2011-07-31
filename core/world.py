@@ -185,13 +185,17 @@ class World:
             self.background.draw(self.engine)
         [s.draw(self.engine) for s in self.sprites]
         x = 0
-        for form in self.formations.values():
-            if form == self.squads[0].formation:
-                pygame.draw.rect(self.engine.surface,[255,0,0],[[x,0],[17,17]])
-            if form.icon:
-                form.icon.pos = [x+1,1]
-                form.icon.draw(self.engine)
-            x+=16
+        if self.squads and self.squads[0].formation:
+            for fname in ["line","corridor"]:
+                dir = self.squads[0].formation.name.split("_")[1]
+                form = self.formations[fname+"_"+dir]
+                if form == self.squads[0].formation:
+                    pygame.draw.rect(self.engine.surface,[255,0,0],[[x,0],[17,17]])
+                if self.squads[0].formation.name.split("_")[1]==form.name.split("_")[1]:
+                    if form.icon:
+                        form.icon.pos = [x+1,1]
+                        form.icon.draw(self.engine)
+                    x+=16
     def select_formation(self,i):
         formation = self.formations[i]
         self.squads[0].set_formation(formation)
@@ -199,22 +203,27 @@ class World:
         s = self.squads[0]
         if s.formation:
             self.select_formation(s.formation.name.split("_")[0]+"_"+dir)
-    def change_spread(self):
+    def change_formation(self,form):
         s = self.squads[0]
-        if s.spread==1:
-            s.spread = 3
-        else:
-            s.spread = 1
-    def center(self,dir):
-        dx,dy = dir
-        s = self.squads[0]
-        s.center[0]+=dx
-        s.center[1]+=dy
-        if s.center[1]<-1:
-            s.center[1]=-1
-        if s.center[1]>1:
-            s.center[1]=1
-        print s.center
+        if s.formation:
+            dir = s.formation.name.split("_")[1]
+            self.select_formation(form+"_"+dir)
+    #~ def change_spread(self):
+        #~ s = self.squads[0]
+        #~ if s.spread==1:
+            #~ s.spread = 3
+        #~ else:
+            #~ s.spread = 1
+    #~ def center(self,dir):
+        #~ dx,dy = dir
+        #~ s = self.squads[0]
+        #~ s.center[0]+=dx
+        #~ s.center[1]+=dy
+        #~ if s.center[1]<-1:
+            #~ s.center[1]=-1
+        #~ if s.center[1]>1:
+            #~ s.center[1]=1
+        #~ print s.center
     def level1(self):
         self.background = ScrollingBackground("art/bg/grassbleh.png")
         for formimg in os.listdir("art/formations"):

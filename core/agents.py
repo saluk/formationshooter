@@ -1,5 +1,6 @@
 import pygame
 import math
+import random
 
 memory = {}
 class Agent(object):
@@ -25,7 +26,7 @@ class Agent(object):
         self.surface = self.graphics
     def update(self,world):
         if self.rotation_on_rot and self.surface:
-            ang = {(1,0):0,(0,-1):90,(-1,0):180,(0,1):270}[tuple(self.rot)]
+            ang = math.atan2(-self.rot[1],self.rot[0])*180.0/math.pi
             self.surface = pygame.transform.rotate(self.graphics,ang)
         world.sprites.append(self)
     def draw(self,engine):
@@ -104,7 +105,7 @@ class Unit(Agent):
         self.next_bullet = self.fire_rate
     def shoot(self,world):
         sp = [self.pos[0]+self.hotspot[0]*self.rot[0],self.pos[1]+self.hotspot[1]*self.rot[1]]
-        b = Bullet("art/fg/bullet.png",sp,self.rot)
+        b = Bullet("art/fg/bullet.png",sp,[self.rot[0],self.rot[1]])
         b.team = self.team
         world.bullets.append(b)
     def update(self,world):

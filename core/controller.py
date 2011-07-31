@@ -33,3 +33,7 @@ class Controller:
                 engine.world.formation_dir("right")
             if e.type == pygame.KEYDOWN and e.key == pygame.K_LEFT:
                 engine.world.formation_dir("left")
+            if e.type == pygame.KEYDOWN and e.key == pygame.K_1:
+                engine.world.change_formation("line")
+            if e.type == pygame.KEYDOWN and e.key == pygame.K_2:
+                engine.world.change_formation("corridor")
