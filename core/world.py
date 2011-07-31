@@ -137,26 +137,67 @@ class World:
     def remove_bullet(self,b):
         if b in self.bullets:
             self.bullets.remove(b)
-    def make_grunt(self):
+    def set_enemy_pos(self,e,pos,offset):
+        d,ai=pos[:2],pos[2:]
+        if d=="xx":
+            e.pos[0]=320+offset
+            e.pos[1]=random.randint(32,240-offset)
+            e.walk_angle = 180
+            e.rot = [-1,0]
+        elif d=="uu":
+            e.pos[0]=320//2
+            e.pos[1]=-offset
+            e.walk_angle = 270
+            e.rot = [0,1]
+        elif d=="ur":
+            e.pos[0]=320+offset
+            e.pos[1]=2*offset
+            e.walk_angle = 180
+            e.rot = [-1,0]
+        elif d=="rr":
+            e.pos[0]=320+offset
+            e.pos[1]=240//2
+            e.walk_angle = 180
+            e.rot = [-1,0]
+        elif d=="br":
+            e.pos[0]=320+offset
+            e.pos[1]=240-2*offset
+            e.walk_angle = 180
+            e.rot = [-1,0]
+        elif d=="bb":
+            e.pos[0]=320//2
+            e.pos[1]=240+offset
+            e.walk_angle = 90
+            e.rot = [0,-1]
+        elif d=="ul":
+            e.pos[0]=-offset
+            e.pos[1]=2*offset
+            e.walk_angle = 0
+            e.rot = [1,0]
+        elif d=="ll":
+            e.pos[0]=-offset
+            e.pos[1]=240//2
+            e.walk_angle = 0
+            e.rot = [1,0]
+        elif d=="bl":
+            e.pos[0]=-offset
+            e.pos[1]=240-2*offset
+            e.walk_angle = 0
+            e.rot = [1,0]
+    def make_grunt(self,pos):
         enemy = Unit("art/fg/grunt.png")
         enemy.team = "enemy"
         enemy.max_speed = 1
-        enemy.pos[0]=320+16
-        enemy.pos[1]=random.randint(16,240-16)
-        enemy.walk_angle = 180
-        enemy.rot = [-1,0]
+        self.set_enemy_pos(enemy,pos,16)
         enemy.set_fire_rate(100)
         self.enemies.append(enemy)
-    def make_tank(self):
+    def make_tank(self,pos):
         enemy = Unit("art/fg/tank.png")
         enemy.team = "enemy"
-        enemy.max_speed = 0.2
+        enemy.max_speed = 0.5
         enemy.hotspot = [32,32]
         enemy.health = 20
-        enemy.pos[0]=320+32
-        enemy.pos[1]=random.randint(32,240-32)
-        enemy.walk_angle = 180
-        enemy.rot = [-1,0]
+        self.set_enemy_pos(enemy,pos,32)
         enemy.set_fire_rate(120)
         enemy.shoot_stream = True
         enemy.stream_length = 40
@@ -164,16 +205,28 @@ class World:
     def update(self):
         self.sprites = []
         
-        self.movement = [0,0]
-        if self.formations:
-            if "_right" in self.squads[0].formation.name:
-                self.movement = [1,0]
+        self.movement = [1,0]
+        #~ if self.formations:
+            #~ if "_right" in self.squads[0].formation.name:
+                #~ self.movement = [1,0]
         if self.movement[0]:
             self.step += self.movement[0]
-            if self.step==2:
-                self.make_grunt()
-            if self.step==100:
-                self.make_tank()
+            if self.level:
+                if isinstance(self.level[0],float):
+                    self.level[0]-=1/320.0
+                    if self.level[0]<=0:
+                        del self.level[0]
+                else:
+                    u = self.level.pop(0)
+                    print u
+                    if u.startswith("g"):
+                        self.make_grunt(u[1:])
+                    elif u.startswith("t"):
+                        self.make_tank(u[1:])
+            #~ if self.step==2:
+                #~ self.make_grunt()
+            #~ if self.step==100:
+                #~ self.make_tank()
 
         self.background.update(self)
         for b in self.bullets:
@@ -208,22 +261,6 @@ class World:
         if s.formation:
             dir = s.formation.name.split("_")[1]
             self.select_formation(form+"_"+dir)
-    #~ def change_spread(self):
-        #~ s = self.squads[0]
-        #~ if s.spread==1:
-            #~ s.spread = 3
-        #~ else:
-            #~ s.spread = 1
-    #~ def center(self,dir):
-        #~ dx,dy = dir
-        #~ s = self.squads[0]
-        #~ s.center[0]+=dx
-        #~ s.center[1]+=dy
-        #~ if s.center[1]<-1:
-            #~ s.center[1]=-1
-        #~ if s.center[1]>1:
-            #~ s.center[1]=1
-        #~ print s.center
     def level1(self):
         self.background = ScrollingBackground("art/bg/grassbleh.png")
         for formimg in os.listdir("art/formations"):
@@ -236,3 +273,5 @@ class World:
         self.squads = [squad]
         self.select_formation("line_right")
         squad.force()
+        self.level = [0.5,"grr",1.,"gll",1.2,"tur",1.,"gbr","grr",0.3,"grr","gbb",1.,"tur","gll",1.,"guu","gbb","gll","grr",1.,"guu","gbb","gll","grr",0.1,"grr",0.1,"gur",0.1,"gbr",0.1,"gur",0.1,"grr",0.1,"gbr",0.1,"tuu",0.1,"tbb"]
+        self.wait = 0
