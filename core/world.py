@@ -120,6 +120,7 @@ class World:
         self.formations = {}
         self.movement = [1,0]
         self.step = 0
+        self.score = 0
     def collide(self,agent,type):
         all = self.enemies[:]
         for s in self.squads:
@@ -134,6 +135,7 @@ class World:
     def remove_unit(self,u):
         """Hacky remove"""
         if u in self.enemies:
+            self.score += 1
             return self.enemies.remove(u)
         for s in self.squads:
             if u in s.units:

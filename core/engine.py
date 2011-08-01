@@ -28,7 +28,7 @@ class Engine:
         self.make_screen()
         self.running = True
         self.clock = pygame.time.Clock()
-        self.font = pygame.font.Font("fonts/vera.ttf",8)
+        self.font = pygame.font.Font("fonts/vera.ttf",12)
     def stop(self):
         self.running = False
     def pause(self):
@@ -81,4 +81,7 @@ class Engine:
         draw_segment(self.window,self.surface,[0,0],[1,1])
         if showfps:
             self.window.blit(self.font.render(str(self.clock.get_fps()),1,[0,0,0]),[0,self.window.get_height()-12])
+        if self.world:
+            score = self.font.render("SCORE: %d"%self.world.score,1,[0,0,0])
+            self.window.blit(score,[self.swidth-score.get_width(),self.sheight-score.get_height()])
         pygame.display.flip()
