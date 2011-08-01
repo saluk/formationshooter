@@ -140,6 +140,8 @@ class World:
         for s in self.squads:
             if u in s.units:
                 s.remove_unit(u)
+                if not s.units:
+                    self.level1()
     def remove_bullet(self,b):
         if b in self.bullets:
             self.bullets.remove(b)
@@ -267,6 +269,7 @@ class World:
             dir = s.formation.name.split("_")[1]
             self.select_formation(form+"_"+dir)
     def level1(self):
+        self.score = 0
         self.background = ScrollingBackground("art/bg/grassbleh.png")
         for formimg in os.listdir("art/formations"):
             formation = Formation(formimg.replace(".png",""))
