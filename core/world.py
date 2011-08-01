@@ -104,6 +104,10 @@ class Squad:
         """Force all units into their positions"""
         for u in self.units:
             u.pos = u.formation_pos.realpos(16*self.spread)
+    def remove_unit(self,u):
+        if u in self.units:
+            self.units.remove(u)
+            self.set_formation(self.formation)
 
 class World:
     def __init__(self,engine):
@@ -133,7 +137,7 @@ class World:
             return self.enemies.remove(u)
         for s in self.squads:
             if u in s.units:
-                s.units.remove(u)
+                s.remove_unit(u)
     def remove_bullet(self,b):
         if b in self.bullets:
             self.bullets.remove(b)
@@ -218,7 +222,6 @@ class World:
                         del self.level[0]
                 else:
                     u = self.level.pop(0)
-                    print u
                     if u.startswith("g"):
                         self.make_grunt(u[1:])
                     elif u.startswith("t"):
